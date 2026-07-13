@@ -143,3 +143,24 @@ test("ships a compact share card and a native Vercel build path", async () => {
   assert.equal(packageJson.dependencies["drizzle-orm"], undefined);
   assert.match(nextConfig, /tsconfig\.next\.json/);
 });
+
+test("supports a repository-aware GitHub Pages static export", async () => {
+  const [workflow, nextConfig, packageSource, layout] = await Promise.all([
+    readFile(new URL(".github/workflows/deploy-pages.yml", root), "utf8"),
+    readFile(new URL("next.config.ts", root), "utf8"),
+    readFile(new URL("package.json", root), "utf8"),
+    readFile(new URL("app/layout.tsx", root), "utf8"),
+  ]);
+
+  const packageJson = JSON.parse(packageSource);
+  assert.equal(
+    packageJson.scripts["build:github"],
+    "GITHUB_PAGES=true next build",
+  );
+  assert.match(nextConfig, /output:\s*isGitHubPages \? "export"/);
+  assert.match(nextConfig, /basePath/);
+  assert.match(workflow, /actions\/deploy-pages@v5/);
+  assert.match(workflow, /actions\/upload-pages-artifact@v5/);
+  assert.match(layout, /GITHUB_REPOSITORY_OWNER/);
+  assert.match(layout, /og\.png/);
+});

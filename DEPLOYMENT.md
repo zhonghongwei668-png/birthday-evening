@@ -17,6 +17,37 @@ pnpm build
 
 Sites 自动提供 HTTPS。当前私人预览可能带有工作区访问限制；如果希望把链接直接发给不在同一工作区的同学，建议使用下面的 Vercel 部署。
 
+## 部署到 GitHub Pages
+
+项目已经包含 GitHub Pages 自动发布配置，适合绕开当前 `chatgpt.site` 的 Cloudflare 访问拦截。
+
+1. 在 GitHub 新建一个公开仓库，例如 `birthday-evening`。不要直接覆盖已有的 `用户名.github.io` 主站，除非这个仓库本来就是专门放邀请页的。
+2. 把本项目推送到仓库的 `main` 分支。
+3. 打开仓库的 **Settings → Pages**。
+4. 在 **Build and deployment → Source** 中选择 **GitHub Actions**。
+5. 打开 **Actions**，等待 **Deploy birthday invitation to GitHub Pages** 变为绿色。
+6. 普通仓库的地址通常为：
+
+```text
+https://你的用户名.github.io/仓库名/
+```
+
+如果仓库名本身是 `你的用户名.github.io`，地址则为 `https://你的用户名.github.io/`。构建流程会自动处理这两种路径，不需要手动修改代码。
+
+如果已经有独立域名，可在 **Settings → Pages → Custom domain** 中绑定；证书生成后开启 **Enforce HTTPS**。如果域名 DNS 使用 Cloudflare，为避免再次触发同类拦截，建议先使用 **DNS only**，不要开启代理。
+
+本地模拟普通项目仓库的 GitHub Pages 构建：
+
+```bash
+GITHUB_REPOSITORY=你的用户名/birthday-evening \
+GITHUB_REPOSITORY_OWNER=你的用户名 \
+NEXT_PUBLIC_BASE_PATH=/birthday-evening \
+NEXT_PUBLIC_SITE_URL=https://你的用户名.github.io/birthday-evening \
+pnpm run build:github
+```
+
+静态文件会输出到 `out/`。GitHub Pages 是公开静态网站；页面虽然设置了 `noindex`，但任何拿到链接的人仍然可以访问。
+
 ## 部署到 Vercel
 
 1. 把项目上传到 GitHub、GitLab 或 Bitbucket。
@@ -66,3 +97,4 @@ pnpm run build:vercel
 - 页面不应请求音频，也不会自动播放音乐。
 - `html2canvas` 只会在保存邀请卡时加载，不影响首次打开速度。
 - 分享链接时应出现 `A Little Birthday Evening` 的米白金色预览卡。
+- GitHub Pages 地址第一次分享前，先直接在微信里打开一次，确认没有 Cloudflare 拦截页。

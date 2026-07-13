@@ -20,6 +20,7 @@ pnpm dev
 ```bash
 pnpm build
 pnpm run build:vercel
+pnpm run build:github
 pnpm lint
 pnpm test
 ```
@@ -32,7 +33,8 @@ pnpm test
 - `styles/tokens.css`：纸张、文字、金色点缀与字体变量
 - `tests/`：服务端渲染、内容结构与 PNG 导出约束检查
 - `vercel.json`：Vercel 原生 Next.js 构建配置
-- `DEPLOYMENT.md`：Sites/Vercel 部署说明与手机测试清单
+- `.github/workflows/deploy-pages.yml`：GitHub Pages 自动发布配置
+- `DEPLOYMENT.md`：Sites、GitHub Pages、Vercel 部署说明与手机测试清单
 
 ## 个性化
 
