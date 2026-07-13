@@ -1,0 +1,15 @@
+:root {
+  --paper: #f3efe7;
+  --paper-light: #faf7f0;
+  --paper-deep: #e8e0d2;
+  --ink: #282724;
+  --ink-soft: #48443e;
+  --muted: #777168;
+  --gold: #9d7842;
+  --gold-light: #c8ae80;
+  --line: rgba(62, 56, 46, 0.14);
+  --font-display: "Iowan Old Style", "Baskerville", "Times New Roman", serif;
+  --font-serif-cn: "Songti SC", "STSong", "Noto Serif CJK SC", serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
