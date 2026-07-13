@@ -2,6 +2,11 @@
 
 import { motion } from "framer-motion";
 import {
+  CALENDAR_DAYS,
+  CALENDAR_MONTH_INDEX,
+  CALENDAR_MONTH_LABEL,
+  CALENDAR_WEEKDAYS,
+  CALENDAR_YEAR,
   DINNER_STYLES,
   MEETING_OPTIONS,
   TIME_OPTIONS,
@@ -15,7 +20,7 @@ import type {
   PlanPhase,
 } from "./types";
 
-interface PlanScreenProps {
+interface DinnerPlanPageProps {
   phase: PlanPhase;
   answers: InvitationAnswers;
   onChange: <K extends keyof InvitationAnswers>(
@@ -27,9 +32,8 @@ interface PlanScreenProps {
 }
 
 const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-const calendarWeekdays = ["一", "二", "三", "四", "五", "六", "日"];
-const julyDays = Array.from({ length: 31 }, (_, index) => index + 1);
-const julyFirstDayOffset = (new Date(2026, 6, 1).getDay() + 6) % 7;
+const julyFirstDayOffset =
+  (new Date(CALENDAR_YEAR, CALENDAR_MONTH_INDEX, 1).getDay() + 6) % 7;
 
 function getJulyDateValue(day: number) {
   return `2026-07-${String(day).padStart(2, "0")}`;
@@ -47,15 +51,16 @@ export function formatChineseDate(value: string) {
   return `${year} 年 ${month} 月 ${day} 日 · ${weekday}`;
 }
 
-export function PlanScreen({
+export function DinnerPlanPage({
   phase,
   answers,
   onChange,
   onBack,
   onContinue,
-}: PlanScreenProps) {
+}: DinnerPlanPageProps) {
   const chapter = phase === "schedule" ? 5 : phase === "style" ? 6 : 7;
   const titleId = `plan-${phase}-title`;
+  const hintId = `plan-${phase}-hint`;
 
   const canContinue =
     phase === "schedule"
@@ -85,13 +90,13 @@ export function PlanScreen({
                 <div className="calendar-heading">
                   <div>
                     <span className="field-kicker">DATE · JULY</span>
-                    <strong>2026 年 7 月</strong>
+                    <strong>{CALENDAR_MONTH_LABEL}</strong>
                   </div>
                   <span className="calendar-note">选一个晚上</span>
                 </div>
 
                 <div className="calendar-weekdays" aria-hidden="true">
-                  {calendarWeekdays.map((weekday) => (
+                  {CALENDAR_WEEKDAYS.map((weekday) => (
                     <span key={weekday}>{weekday}</span>
                   ))}
                 </div>
@@ -104,14 +109,13 @@ export function PlanScreen({
                       aria-hidden="true"
                     />
                   ))}
-                  {julyDays.map((day) => {
+                  {CALENDAR_DAYS.map((day) => {
                     const dateValue = getJulyDateValue(day);
                     const selected = answers.date === dateValue;
                     return (
-                      <motion.label
+                      <label
                         key={dateValue}
                         className={`calendar-day ${selected ? "is-selected" : ""}`}
-                        whileTap={{ scale: 0.96 }}
                       >
                         <input
                           className="sr-only"
@@ -120,11 +124,11 @@ export function PlanScreen({
                           value={dateValue}
                           checked={selected}
                           onChange={() => onChange("date", dateValue)}
-                          aria-label={`2026 年 7 月 ${day} 日，${weekdays[new Date(2026, 6, day).getDay()]}`}
+                          aria-label={`${CALENDAR_YEAR} 年 7 月 ${day} 日，${weekdays[new Date(CALENDAR_YEAR, CALENDAR_MONTH_INDEX, day).getDay()]}`}
                         />
                         <span>{day}</span>
                         <i aria-hidden="true" />
-                      </motion.label>
+                      </label>
                     );
                   })}
                 </div>
@@ -261,18 +265,21 @@ export function PlanScreen({
             type="button"
             onClick={onContinue}
             disabled={!canContinue}
+            aria-describedby={hintId}
           >
             <span>{phase === "meeting" ? "生成邀请卡" : "继续"}</span>
             <span aria-hidden="true">{phase === "meeting" ? "✦" : "→"}</span>
           </button>
           {!canContinue ? (
-            <p className="completion-hint">
+            <p className="completion-hint" id={hintId}>
               {phase === "schedule"
                 ? "选好日期和时间，就可以继续。"
                 : "选一个最舒服的答案就好。"}
             </p>
           ) : (
-            <p className="completion-hint is-ready">已经记下来了。</p>
+            <p className="completion-hint is-ready" id={hintId}>
+              已经记下来了。
+            </p>
           )}
         </div>
       </div>

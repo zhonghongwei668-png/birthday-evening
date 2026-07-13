@@ -25,7 +25,7 @@ async function render() {
   );
 }
 
-test("server-renders the birthday invitation welcome page", async () => {
+test("server-renders the lightweight birthday invitation opening", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
@@ -33,9 +33,8 @@ test("server-renders the birthday invitation welcome page", async () => {
   const html = await response.text();
   assert.match(html, /<html[^>]*lang="zh-CN"/i);
   assert.match(html, /<title>A Little Birthday Evening<\/title>/i);
-  assert.match(html, /一份关于生日晚餐的小小计划/);
-  assert.match(html, /Hi，<!-- -->XXX/);
-  assert.match(html, />开始</);
+  assert.match(html, /PRIVATE BIRTHDAY DINNER NOTE/);
+  assert.match(html, /正在打开生日晚餐邀请/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|SkeletonPreview/);
 });
 
@@ -48,6 +47,7 @@ test("uses the requested invitation packages and removes the starter preview", a
 
   assert.match(page, /BirthdayInvitation/);
   assert.match(layout, /lang="zh-CN"/);
+  assert.match(layout, /og\.png/);
   assert.match(packageJson, /"framer-motion": "12\.42\.2"/);
   assert.match(packageJson, /"html2canvas": "1\.4\.1"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);

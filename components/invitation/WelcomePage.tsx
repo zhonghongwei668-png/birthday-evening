@@ -9,7 +9,7 @@ const reveal = {
   visible: { opacity: 1, y: 0 },
 };
 
-export function WelcomeScreen({ onStart }: { onStart: () => void }) {
+export function WelcomePage({ onStart }: { onStart: () => void }) {
   return (
     <PageFrame className="welcome-page" labelledBy="welcome-title">
       <div className="paper-orbit" aria-hidden="true">
@@ -32,7 +32,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
             <br />
             Birthday Evening
           </h1>
-          <p className="welcome-subtitle">一份关于生日晚餐的小小计划</p>
+          <p className="welcome-subtitle">一份提前准备的小小晚餐计划</p>
         </motion.div>
 
         <motion.div className="fine-rule" variants={reveal} aria-hidden="true">
@@ -42,7 +42,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
         <motion.div className="welcome-letter" variants={reveal}>
           <p>Hi，{RECIPIENT_NAME}</p>
           <p>
-            距离你的生日还有一点时间，
+            距离你的生日还有一点时间。
             <br />
             想提前准备一个轻松的晚上。
           </p>
@@ -70,7 +70,9 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
         </motion.button>
       </motion.div>
 
-      <p className="edition-note">A quiet table, saved for a good evening.</p>
+      <p className="edition-note">
+        几个月没见，正好借这个晚上重新见面，聊聊天，吃顿饭。
+      </p>
     </PageFrame>
   );
 }

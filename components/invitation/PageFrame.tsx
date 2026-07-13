@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 const pageVariants: Variants = {
   initial: { opacity: 0, y: 14 },
@@ -20,8 +20,16 @@ export function PageFrame({
   className = "",
   labelledBy,
 }: PageFrameProps) {
+  const pageRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    pageRef.current?.focus({ preventScroll: true });
+  }, []);
+
   return (
     <motion.section
+      ref={pageRef}
+      tabIndex={-1}
       aria-labelledby={labelledBy}
       className={`invitation-page ${className}`}
       variants={pageVariants}

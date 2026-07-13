@@ -14,13 +14,16 @@
 }
 
 html {
-  min-width: 320px;
+  width: 100%;
+  max-width: 100%;
   background: var(--paper);
   scroll-behavior: smooth;
 }
 
 body {
-  min-width: 320px;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
   min-height: 100svh;
   margin: 0;
   overflow-x: hidden;
@@ -39,6 +42,7 @@ input {
 button,
 label {
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 button {
@@ -51,8 +55,9 @@ button {
 
 .invitation-app {
   position: relative;
+  min-height: 100vh;
   min-height: 100svh;
-  overflow: hidden;
+  overflow: visible;
   background:
     radial-gradient(circle at 50% -12%, rgba(255, 255, 255, 0.9), transparent 42%),
     linear-gradient(155deg, #f7f3eb 0%, var(--paper) 56%, #eee7dc 100%);
@@ -70,7 +75,6 @@ button {
     radial-gradient(rgba(157, 120, 66, 0.08) 0.45px, transparent 0.6px);
   background-position: 0 0, 7px 7px;
   background-size: 13px 13px, 17px 17px;
-  mask-image: linear-gradient(to bottom, black, transparent 95%);
 }
 
 .ambient-light {
@@ -81,7 +85,6 @@ button {
   border-radius: 999px;
   pointer-events: none;
   opacity: 0.16;
-  filter: blur(20px);
   background: radial-gradient(circle, rgba(207, 178, 126, 0.55), transparent 67%);
 }
 
@@ -101,11 +104,81 @@ button {
   display: flex;
   width: 100%;
   max-width: 520px;
+  min-height: 100vh;
   min-height: 100svh;
   margin: 0 auto;
   padding: max(24px, env(safe-area-inset-top)) 22px
     max(30px, env(safe-area-inset-bottom));
   flex-direction: column;
+}
+
+.invitation-page:focus {
+  outline: none;
+}
+
+/* First-open note */
+.opening-page {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: max(24px, env(safe-area-inset-top)) 22px
+    max(30px, env(safe-area-inset-bottom));
+  align-items: center;
+  justify-content: center;
+}
+
+.opening-note {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: var(--ink);
+  text-align: center;
+}
+
+.opening-mark {
+  color: var(--gold);
+  font-size: 13px;
+}
+
+.opening-note p {
+  margin: 14px 0 12px;
+  font-family: var(--font-display);
+  font-size: clamp(27px, 8vw, 38px);
+  letter-spacing: -0.035em;
+}
+
+.opening-note small {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 620;
+  letter-spacing: 0.2em;
+}
+
+.opening-line {
+  position: relative;
+  width: 92px;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(133, 95, 44, 0.18);
+}
+
+.opening-line::after {
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  content: "";
+  transform: translateX(-100%);
+  animation: opening-line 480ms cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards;
+}
+
+@keyframes opening-line {
+  to {
+    transform: translateX(0);
+  }
 }
 
 .eyebrow {
@@ -285,10 +358,10 @@ button {
 .edition-note {
   margin: 0;
   color: rgba(72, 68, 62, 0.58);
-  font-family: var(--font-display);
+  font-family: var(--font-serif-cn);
   font-size: 11px;
-  font-style: italic;
-  letter-spacing: 0.055em;
+  letter-spacing: 0.035em;
+  line-height: 1.7;
 }
 
 /* Progress and shared chapter layout */
@@ -299,7 +372,7 @@ button {
 
 .back-button {
   display: inline-flex;
-  min-height: 44px;
+  min-height: 48px;
   margin: -8px 0 5px -9px;
   padding: 0 9px;
   align-items: center;
@@ -432,7 +505,8 @@ button {
   color: var(--gold);
   font-family: var(--font-display);
   font-size: 17px;
-  filter: grayscale(0.2) saturate(0.75);
+  filter: grayscale(1) sepia(0.18) saturate(0.55);
+  opacity: 0.8;
 }
 
 .choice-label {
@@ -589,15 +663,14 @@ button {
 }
 
 .calendar-empty {
-  aspect-ratio: 1;
+  min-height: 48px;
 }
 
 .calendar-day {
   position: relative;
   display: flex;
   width: 100%;
-  min-height: 37px;
-  aspect-ratio: 1;
+  min-height: 48px;
   align-items: center;
   justify-content: center;
   border: 1px solid transparent;
@@ -609,7 +682,12 @@ button {
   transition:
     color 160ms ease,
     background-color 160ms ease,
-    border-color 160ms ease;
+    border-color 160ms ease,
+    transform 120ms ease;
+}
+
+.calendar-day:active {
+  transform: scale(0.96);
 }
 
 .calendar-day:hover {
@@ -811,6 +889,7 @@ button {
 
 .generating-note {
   display: flex;
+  min-height: calc(100vh - 110px);
   min-height: calc(100svh - 110px);
   align-items: center;
   justify-content: center;
@@ -918,7 +997,7 @@ button {
   align-items: center;
   justify-content: space-between;
   color: #8f6c38;
-  font-size: 7px;
+  font-size: 9px;
   font-weight: 650;
   letter-spacing: 0.22em;
 }
@@ -975,8 +1054,8 @@ button {
 .card-details {
   display: grid;
   margin: 0;
-  gap: 11px 18px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .card-detail {
@@ -988,8 +1067,8 @@ button {
 }
 
 .card-detail dt {
-  color: #8f6c38;
-  font-size: 7px;
+  color: #765928;
+  font-size: 9px;
   font-weight: 650;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -1007,34 +1086,8 @@ button {
   display: block;
   margin-top: 4px;
   color: #777168;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.04em;
-}
-
-.card-arrival {
-  display: flex;
-  margin-top: 12px;
-  padding-top: 9px;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  border-top: 1px solid #ddd2bd;
-}
-
-.card-arrival span {
-  flex: none;
-  color: #8f6c38;
-  font-size: 7px;
-  font-weight: 650;
-  letter-spacing: 0.18em;
-}
-
-.card-arrival p {
-  margin: 0;
-  color: #5d5850;
-  font-size: 8px;
-  letter-spacing: 0.025em;
-  text-align: right;
 }
 
 .card-footer {
@@ -1042,7 +1095,7 @@ button {
   margin-top: auto;
   padding-top: 13px;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 10px;
 }
 
@@ -1052,15 +1105,6 @@ button {
   font-size: 11px;
   font-style: italic;
   line-height: 1.35;
-}
-
-.card-notes {
-  max-width: 56%;
-  color: #827c73;
-  font-size: 7px;
-  letter-spacing: 0.05em;
-  line-height: 1.5;
-  text-align: right;
 }
 
 .final-actions {
@@ -1076,10 +1120,13 @@ button {
   width: auto;
   min-width: 216px;
   flex: 1;
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.06em;
 }
 
 .text-button {
-  min-height: 44px;
+  min-height: 48px;
   padding: 0 4px;
   border: 0;
   background: transparent;
@@ -1102,9 +1149,12 @@ button {
   text-align: center;
 }
 
-.postscript {
+.hidden-notes {
   max-width: 420px;
   margin: 47px auto 0;
+}
+
+.postscript {
   padding: 28px 3px 0;
   color: var(--ink-soft);
   font-family: var(--font-serif-cn);
@@ -1131,6 +1181,38 @@ button {
 
 .postscript p {
   margin: 0 0 14px;
+}
+
+.personal-note {
+  margin-top: 35px;
+  padding: 24px 3px 0;
+  border-top: 1px solid rgba(62, 56, 46, 0.12);
+  color: var(--muted);
+  font-family: var(--font-serif-cn);
+  font-size: 12px;
+  letter-spacing: 0.025em;
+  line-height: 1.9;
+}
+
+.personal-note-label {
+  margin: 0 0 15px !important;
+  color: var(--gold);
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.2em;
+}
+
+.personal-note p {
+  margin: 0 0 13px;
+}
+
+.personal-note small {
+  display: block;
+  margin-top: 19px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.04em;
 }
 
 @media (min-width: 700px) {
@@ -1190,7 +1272,7 @@ button {
   }
 
   .calendar-day {
-    min-height: 40px;
+    min-height: 48px;
   }
 
   .calendar-grid {

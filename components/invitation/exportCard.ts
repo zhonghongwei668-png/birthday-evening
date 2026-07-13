@@ -6,7 +6,7 @@ export async function exportInvitationCard(element: HTMLElement) {
   const { default: html2canvas } = await import("html2canvas");
   const canvas = await html2canvas(element, {
     backgroundColor: "#f7f3eb",
-    scale: Math.min(3, Math.max(2, (window.devicePixelRatio || 1) * 2)),
+    scale: 2,
     useCORS: true,
     logging: false,
   });

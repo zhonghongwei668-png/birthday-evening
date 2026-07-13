@@ -47,8 +47,8 @@ export const InvitationCard = forwardRef<HTMLDivElement, InvitationCardProps>(
           <div className="corner corner-br" aria-hidden="true" />
 
           <header className="card-header">
-            <span>PRIVATE DINNER NOTE</span>
-            <span>NO. 01</span>
+            <span>BIRTHDAY DINNER NOTE</span>
+            <span>JULY · 2026</span>
           </header>
 
           <div className="card-title-block">
@@ -66,25 +66,20 @@ export const InvitationCard = forwardRef<HTMLDivElement, InvitationCardProps>(
               <dt>Date</dt>
               <dd>{formatCardDate(answers.date)}</dd>
             </div>
-            <div className="card-detail">
+            <div className="card-detail card-detail-wide">
               <dt>Time</dt>
               <dd>{answers.time}</dd>
-            </div>
-            <div className="card-detail">
-              <dt>Place</dt>
-              <dd>Coming Soon</dd>
             </div>
             <div className="card-detail card-detail-wide">
               <dt>Dinner Style</dt>
               <dd>{style?.title ?? "A Good Evening"}</dd>
               <small>{style ? `${style.subtitle} · ${style.description}` : ""}</small>
             </div>
+            <div className="card-detail card-detail-wide">
+              <dt>Place</dt>
+              <dd>Coming Soon</dd>
+            </div>
           </dl>
-
-          <div className="card-arrival">
-            <span>ARRIVAL NOTE</span>
-            <p>{answers.meetingWay}</p>
-          </div>
 
           <footer className="card-footer">
             <p>
@@ -94,9 +89,6 @@ export const InvitationCard = forwardRef<HTMLDivElement, InvitationCardProps>(
               <br />
               A nice memory.
             </p>
-            <span className="card-notes">
-              {answers.dinnerKeyword} · {answers.birthdayPriority} · {answers.memory}
-            </span>
           </footer>
         </div>
       </div>

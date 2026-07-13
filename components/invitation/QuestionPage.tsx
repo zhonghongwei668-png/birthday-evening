@@ -6,7 +6,7 @@ import { ChoiceCard } from "./ChoiceCard";
 import { PageFrame } from "./PageFrame";
 import { ProgressRail } from "./ProgressRail";
 
-interface QuestionScreenProps {
+interface QuestionPageProps {
   chapter: number;
   question: InvitationQuestion;
   value: string;
@@ -15,14 +15,14 @@ interface QuestionScreenProps {
   onContinue: () => void;
 }
 
-export function QuestionScreen({
+export function QuestionPage({
   chapter,
   question,
   value,
   onChange,
   onBack,
   onContinue,
-}: QuestionScreenProps) {
+}: QuestionPageProps) {
   const titleId = `question-${question.id}`;
 
   return (
@@ -37,7 +37,7 @@ export function QuestionScreen({
           <h2 id={titleId} className="question-title">
             {question.prompt}
           </h2>
-          <p className="question-note">选择一个就好，不用想太久。</p>
+          <p className="question-note">凭第一感觉就好。</p>
         </div>
 
         <fieldset className="choices-fieldset">

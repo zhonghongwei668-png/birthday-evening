@@ -51,10 +51,18 @@ export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
 
   const exportLabel =
     exportState === "working"
-      ? "正在生成…"
+      ? "Saving this moment…"
       : exportState === "saved"
-        ? "图片已保存"
-        : "生成邀请卡图片";
+        ? "Moment saved"
+        : "Save this moment";
+  const exportStatusText =
+    exportState === "error"
+      ? "刚刚没有生成成功，再试一次就好。"
+      : exportState === "working"
+        ? "正在生成邀请卡图片。"
+        : exportState === "saved"
+          ? "邀请卡已经保存为 PNG。"
+          : "";
 
   return (
     <PageFrame className="final-page" labelledBy="final-title">
@@ -70,6 +78,9 @@ export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
           <motion.div
             key="generating"
             className="generating-note"
+            role="status"
+            aria-live="polite"
+            aria-busy="true"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -100,6 +111,7 @@ export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
                 type="button"
                 onClick={handleExport}
                 disabled={exportState === "working"}
+                aria-label="Save this moment，保存生日晚餐邀请卡图片"
               >
                 <span>{exportLabel}</span>
                 <span aria-hidden="true">↓</span>
@@ -108,37 +120,50 @@ export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
                 重新编辑
               </button>
               <p className="export-status" role="status" aria-live="polite">
-                {exportState === "error"
-                  ? "刚刚没有生成成功，再试一次就好。"
-                  : exportState === "saved"
-                    ? "邀请卡已经保存为 PNG。"
-                    : ""}
+                {exportStatusText}
               </p>
             </motion.div>
 
             <AnimatePresence>
               {showPostscript ? (
-                <motion.aside
-                  className="postscript"
+                <motion.div
+                  className="hidden-notes"
                   data-html2canvas-ignore="true"
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <span className="postscript-line" aria-hidden="true" />
-                  <p className="postscript-label">P.S.</p>
-                  <p>
-                    成年之后，
-                    <br />
-                    生日好像越来越简单了。
-                  </p>
-                  <p>所以想偷偷增加一点仪式感。</p>
-                  <p>
-                    希望这个提前准备的小晚上，
-                    <br />
-                    能成为最近生活里一个轻松的小片段。
-                  </p>
-                </motion.aside>
+                  <aside className="postscript">
+                    <span className="postscript-line" aria-hidden="true" />
+                    <p className="postscript-label">P.S.</p>
+                    <p>
+                      成年之后，
+                      <br />
+                      生日好像越来越简单了。
+                    </p>
+                    <p>所以想偷偷增加一点仪式感。</p>
+                    <p>
+                      希望这个提前准备的小晚上，
+                      <br />
+                      能成为最近生活里一个轻松的小片段。
+                    </p>
+                  </aside>
+
+                  <aside className="personal-note">
+                    <p className="personal-note-label">A SMALL NOTE</p>
+                    <p>
+                      其实准备这个小页面，
+                      <br />
+                      只是觉得生日一年一次。
+                    </p>
+                    <p>
+                      提前认真安排一点东西，
+                      <br />
+                      比临时说一句生日快乐更有意思。
+                    </p>
+                    <small>留一点小惊喜，也记录一个好晚上。</small>
+                  </aside>
+                </motion.div>
               ) : null}
             </AnimatePresence>
           </motion.div>

@@ -1,11 +1,13 @@
 "use client";
 
-import { AnimatePresence, MotionConfig } from "framer-motion";
+import { AnimatePresence, MotionConfig, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { QUESTIONS } from "@/data/invitation";
 import { FinalScreen } from "./FinalScreen";
-import { PlanScreen } from "./PlanScreen";
-import { QuestionScreen } from "./QuestionScreen";
-import { WelcomeScreen } from "./WelcomeScreen";
+import { OpeningPage } from "./OpeningPage";
+import { DinnerPlanPage } from "./DinnerPlanPage";
+import { QuestionPage } from "./QuestionPage";
+import { WelcomePage } from "./WelcomePage";
 import {
   FIRST_QUESTION_STEP,
   LAST_QUESTION_STEP,
@@ -18,6 +20,16 @@ import {
 
 export function BirthdayInvitation() {
   const { step, answers, updateAnswer, next, back, editPlan } = useInvitation();
+  const reduceMotion = useReducedMotion();
+  const [isOpening, setIsOpening] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => setIsOpening(false),
+      reduceMotion ? 80 : 620,
+    );
+    return () => window.clearTimeout(timer);
+  }, [reduceMotion]);
 
   const questionIndex = step - FIRST_QUESTION_STEP;
   const question =
@@ -33,12 +45,14 @@ export function BirthdayInvitation() {
         <div className="ambient-light ambient-light-two" aria-hidden="true" />
 
         <AnimatePresence mode="wait" initial={false}>
-          {step === WELCOME_STEP ? (
-            <WelcomeScreen key="welcome" onStart={next} />
+          {isOpening ? <OpeningPage key="opening" /> : null}
+
+          {!isOpening && step === WELCOME_STEP ? (
+            <WelcomePage key="welcome" onStart={next} />
           ) : null}
 
-          {question ? (
-            <QuestionScreen
+          {!isOpening && question ? (
+            <QuestionPage
               key={question.id}
               chapter={step}
               question={question}
@@ -49,8 +63,8 @@ export function BirthdayInvitation() {
             />
           ) : null}
 
-          {step === SCHEDULE_STEP ? (
-            <PlanScreen
+          {!isOpening && step === SCHEDULE_STEP ? (
+            <DinnerPlanPage
               key="schedule"
               phase="schedule"
               answers={answers}
@@ -60,8 +74,8 @@ export function BirthdayInvitation() {
             />
           ) : null}
 
-          {step === STYLE_STEP ? (
-            <PlanScreen
+          {!isOpening && step === STYLE_STEP ? (
+            <DinnerPlanPage
               key="style"
               phase="style"
               answers={answers}
@@ -71,8 +85,8 @@ export function BirthdayInvitation() {
             />
           ) : null}
 
-          {step === MEETING_STEP ? (
-            <PlanScreen
+          {!isOpening && step === MEETING_STEP ? (
+            <DinnerPlanPage
               key="meeting"
               phase="meeting"
               answers={answers}
@@ -82,7 +96,7 @@ export function BirthdayInvitation() {
             />
           ) : null}
 
-          {step > MEETING_STEP ? (
+          {!isOpening && step > MEETING_STEP ? (
             <FinalScreen key="final" answers={answers} onEdit={editPlan} />
           ) : null}
         </AnimatePresence>
