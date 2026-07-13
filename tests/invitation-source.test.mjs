@@ -47,3 +47,18 @@ test("keeps export dynamic, browser-only, and PNG based", async () => {
   assert.match(stateSource, /useState<InvitationAnswers>/);
   assert.match(stateSource, /setAnswers\(\(current\) =>/);
 });
+
+test("uses an inline July calendar instead of the native date picker", async () => {
+  const source = await readFile(
+    new URL("components/invitation/PlanScreen.tsx", root),
+    "utf8",
+  );
+
+  assert.match(source, /2026 年 7 月/);
+  assert.match(source, /length: 31/);
+  assert.match(source, /calendar-day/);
+  assert.match(source, /type="radio"/);
+  assert.doesNotMatch(source, /type="date"/);
+  assert.match(source, /onChange\(\"date\", dateValue\)/);
+  assert.match(source, /isJulyDate\(answers\.date\)/);
+});

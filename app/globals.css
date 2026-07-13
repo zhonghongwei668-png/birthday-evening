@@ -484,6 +484,19 @@ button {
   padding-top: 5.5svh;
 }
 
+.plan-page-schedule .plan-content {
+  padding-top: 3.5svh;
+  justify-content: flex-start;
+}
+
+.plan-page-schedule .plan-heading {
+  margin-bottom: 18px;
+}
+
+.plan-page-schedule .schedule-stack {
+  gap: 16px;
+}
+
 .plan-heading {
   margin-bottom: 25px;
 }
@@ -513,22 +526,40 @@ button {
   gap: 21px;
 }
 
-.date-card {
-  position: relative;
-  display: flex;
-  min-height: 105px;
-  padding: 17px 18px;
-  overflow: hidden;
-  flex-direction: column;
-  justify-content: center;
+.calendar-card {
+  min-width: 0;
+  margin: 0;
+  padding: 17px 14px 13px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: rgba(250, 247, 240, 0.65);
-  cursor: pointer;
 }
 
-.date-card:hover {
-  border-color: rgba(157, 120, 66, 0.4);
+.calendar-heading {
+  display: flex;
+  padding: 0 3px 14px;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(62, 56, 46, 0.1);
+}
+
+.calendar-heading > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-heading strong {
+  margin-top: 6px;
+  font-family: var(--font-serif-cn);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.calendar-note {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.05em;
 }
 
 .field-kicker {
@@ -538,31 +569,105 @@ button {
   letter-spacing: 0.2em;
 }
 
-.date-card strong {
-  margin-top: 9px;
-  font-family: var(--font-serif-cn);
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 0.035em;
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
-.date-action {
-  position: absolute;
-  right: 16px;
-  bottom: 14px;
+.calendar-weekdays {
+  margin-top: 13px;
   color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 0.05em;
+  font-family: var(--font-serif-cn);
+  font-size: 9px;
+  text-align: center;
 }
 
-.date-input {
-  position: absolute;
-  inset: 0;
+.calendar-grid {
+  margin-top: 6px;
+  gap: 2px;
+}
+
+.calendar-empty {
+  aspect-ratio: 1;
+}
+
+.calendar-day {
+  position: relative;
+  display: flex;
   width: 100%;
-  height: 100%;
-  opacity: 0.001;
+  min-height: 37px;
+  aspect-ratio: 1;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--ink-soft);
   cursor: pointer;
-  color-scheme: light;
+  font-family: var(--font-display);
+  font-size: 14px;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.calendar-day:hover {
+  border-color: rgba(157, 120, 66, 0.35);
+  background: rgba(157, 120, 66, 0.06);
+}
+
+.calendar-day:has(input:focus-visible) {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+.calendar-day i {
+  position: absolute;
+  bottom: 4px;
+  width: 3px;
+  height: 3px;
+  border-radius: 99px;
+  background: transparent;
+}
+
+.calendar-day.is-selected {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper-light);
+}
+
+.calendar-day.is-selected i {
+  background: var(--gold-light);
+}
+
+.calendar-picked {
+  display: flex;
+  min-height: 31px;
+  margin-top: 10px;
+  padding: 10px 3px 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid rgba(62, 56, 46, 0.1);
+}
+
+.calendar-picked span {
+  flex: none;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+
+.calendar-picked strong {
+  overflow: hidden;
+  font-family: var(--font-serif-cn);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .time-fieldset .field-kicker {
@@ -1077,6 +1182,25 @@ button {
   .choice-card {
     min-height: 59px;
     padding-left: 12px;
+  }
+
+  .calendar-card {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .calendar-day {
+    min-height: 40px;
+  }
+
+  .calendar-grid {
+    gap: 0;
+  }
+
+  .calendar-heading,
+  .calendar-picked {
+    margin-right: 12px;
+    margin-left: 12px;
   }
 
   .style-card {

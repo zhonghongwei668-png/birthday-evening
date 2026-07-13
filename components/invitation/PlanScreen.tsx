@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
 import {
   DINNER_STYLES,
   MEETING_OPTIONS,
@@ -28,12 +27,16 @@ interface PlanScreenProps {
 }
 
 const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+const calendarWeekdays = ["一", "二", "三", "四", "五", "六", "日"];
+const julyDays = Array.from({ length: 31 }, (_, index) => index + 1);
+const julyFirstDayOffset = (new Date(2026, 6, 1).getDay() + 6) % 7;
 
-function getTodayInputValue() {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${now.getFullYear()}-${month}-${day}`;
+function getJulyDateValue(day: number) {
+  return `2026-07-${String(day).padStart(2, "0")}`;
+}
+
+function isJulyDate(value: string) {
+  return /^2026-07-(0[1-9]|[12]\d|3[01])$/.test(value);
 }
 
 export function formatChineseDate(value: string) {
@@ -51,19 +54,18 @@ export function PlanScreen({
   onBack,
   onContinue,
 }: PlanScreenProps) {
-  const [minDate] = useState(getTodayInputValue);
   const chapter = phase === "schedule" ? 5 : phase === "style" ? 6 : 7;
   const titleId = `plan-${phase}-title`;
 
   const canContinue =
     phase === "schedule"
-      ? Boolean(answers.date && answers.time)
+      ? Boolean(isJulyDate(answers.date) && answers.time)
       : phase === "style"
         ? Boolean(answers.dinnerStyle)
         : Boolean(answers.meetingWay);
 
   return (
-    <PageFrame className="plan-page" labelledBy={titleId}>
+    <PageFrame className={`plan-page plan-page-${phase}`} labelledBy={titleId}>
       <ProgressRail current={chapter} onBack={onBack} />
 
       <div className="chapter-content plan-content">
@@ -78,22 +80,64 @@ export function PlanScreen({
             </div>
 
             <div className="schedule-stack">
-              <label className="date-card" htmlFor="birthday-date">
-                <span className="field-kicker">DATE</span>
-                <strong>{formatChineseDate(answers.date)}</strong>
-                <span className="date-action">
-                  {answers.date ? "更换日期" : "打开日历"} <span aria-hidden="true">↗</span>
-                </span>
-                <input
-                  id="birthday-date"
-                  className="date-input"
-                  type="date"
-                  min={minDate}
-                  value={answers.date}
-                  onChange={(event) => onChange("date", event.target.value)}
-                  suppressHydrationWarning
-                />
-              </label>
+              <fieldset className="calendar-card">
+                <legend className="sr-only">选择 2026 年 7 月的日期</legend>
+                <div className="calendar-heading">
+                  <div>
+                    <span className="field-kicker">DATE · JULY</span>
+                    <strong>2026 年 7 月</strong>
+                  </div>
+                  <span className="calendar-note">选一个晚上</span>
+                </div>
+
+                <div className="calendar-weekdays" aria-hidden="true">
+                  {calendarWeekdays.map((weekday) => (
+                    <span key={weekday}>{weekday}</span>
+                  ))}
+                </div>
+
+                <div className="calendar-grid">
+                  {Array.from({ length: julyFirstDayOffset }, (_, index) => (
+                    <span
+                      className="calendar-empty"
+                      key={`empty-${index}`}
+                      aria-hidden="true"
+                    />
+                  ))}
+                  {julyDays.map((day) => {
+                    const dateValue = getJulyDateValue(day);
+                    const selected = answers.date === dateValue;
+                    return (
+                      <motion.label
+                        key={dateValue}
+                        className={`calendar-day ${selected ? "is-selected" : ""}`}
+                        whileTap={{ scale: 0.96 }}
+                      >
+                        <input
+                          className="sr-only"
+                          type="radio"
+                          name="date"
+                          value={dateValue}
+                          checked={selected}
+                          onChange={() => onChange("date", dateValue)}
+                          aria-label={`2026 年 7 月 ${day} 日，${weekdays[new Date(2026, 6, day).getDay()]}`}
+                        />
+                        <span>{day}</span>
+                        <i aria-hidden="true" />
+                      </motion.label>
+                    );
+                  })}
+                </div>
+
+                <div className="calendar-picked" aria-live="polite">
+                  <span>
+                    {answers.date ? "小小计划定在" : "挑一个合适的晚上"}
+                  </span>
+                  <strong>
+                    {answers.date ? formatChineseDate(answers.date) : "—"}
+                  </strong>
+                </div>
+              </fieldset>
 
               <fieldset className="time-fieldset">
                 <legend className="field-kicker">TIME</legend>
