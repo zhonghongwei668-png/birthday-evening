@@ -1,6 +1,6 @@
 1:"$Sreact.fragment"
-2:I[149,["/birthday-evening/_next/static/chunks/0typu5mmra_zv.js","/birthday-evening/_next/static/chunks/0-7s6yzri5c1a.js","/birthday-evening/_next/static/chunks/0jsjk~y6_eo_3.js"],"BirthdayInvitation"]
-3:I[25326,["/birthday-evening/_next/static/chunks/0typu5mmra_zv.js"],"OutletBoundary"]
+2:I[6597,["200","static/chunks/200-971fa73eeef8eb63.js","974","static/chunks/app/page-610889a6fe47b710.js"],"BirthdayInvitation"]
+3:I[2748,[],"OutletBoundary"]
 4:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{}],[["$","script","script-0",{"src":"/birthday-evening/_next/static/chunks/0-7s6yzri5c1a.js","async":true}],["$","script","script-1",{"src":"/birthday-evening/_next/static/chunks/0jsjk~y6_eo_3.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"jjqKP3bQuqdsHSSHy74E2"}
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"-4DcrBEFm1hVjLvKpDBYP"}
 5:null
