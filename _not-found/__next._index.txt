@@ -1,5 +1,5 @@
 1:"$Sreact.fragment"
 2:I[4441,[],""]
 3:I[4461,[],""]
-:HL["/birthday-evening/_next/static/css/4d324ad17ff2880d.css","style"]
-0:{"rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/birthday-evening/_next/static/css/4d324ad17ff2880d.css","precedence":"next"}]],["$","html",null,{"lang":"zh-CN","children":["$","body",null,{"children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"__E3i9U3_8b3FbqreMURm"}
+:HL["/birthday-evening/_next/static/css/3979142b14e896df.css","style"]
+0:{"rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/birthday-evening/_next/static/css/3979142b14e896df.css","precedence":"next"}]],["$","html",null,{"lang":"zh-CN","children":["$","body",null,{"children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"7frTHD6vMxBOXM9Rltu8l"}
