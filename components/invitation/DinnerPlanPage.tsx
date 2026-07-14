@@ -1,10 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
-  CALENDAR_DAYS,
-  CALENDAR_MONTH_INDEX,
-  CALENDAR_MONTH_LABEL,
+  CALENDAR_MONTHS,
   CALENDAR_WEEKDAYS,
   CALENDAR_YEAR,
   DINNER_STYLES,
@@ -32,15 +31,24 @@ interface DinnerPlanPageProps {
 }
 
 const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-const julyFirstDayOffset =
-  (new Date(CALENDAR_YEAR, CALENDAR_MONTH_INDEX, 1).getDay() + 6) % 7;
-
-function getJulyDateValue(day: number) {
-  return `2026-07-${String(day).padStart(2, "0")}`;
+function getDateValue(monthIndex: number, day: number) {
+  return `${CALENDAR_YEAR}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
-function isJulyDate(value: string) {
-  return /^2026-07-(0[1-9]|[12]\d|3[01])$/.test(value);
+function isDateInInvitationYear(value: string) {
+  const match = /^(2026)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.exec(
+    value,
+  );
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(year, month - 1, day);
+  return (
+    date.getFullYear() === CALENDAR_YEAR &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
 }
 
 export function formatChineseDate(value: string) {
@@ -58,13 +66,28 @@ export function DinnerPlanPage({
   onBack,
   onContinue,
 }: DinnerPlanPageProps) {
+  const initialCalendarMonth = isDateInInvitationYear(answers.date)
+    ? Number(answers.date.split("-")[1]) - 1
+    : 6;
+  const [calendarMonth, setCalendarMonth] = useState(initialCalendarMonth);
+  const daysInMonth = new Date(
+    CALENDAR_YEAR,
+    calendarMonth + 1,
+    0,
+  ).getDate();
+  const firstDayOffset =
+    (new Date(CALENDAR_YEAR, calendarMonth, 1).getDay() + 6) % 7;
+  const calendarDays = Array.from(
+    { length: daysInMonth },
+    (_, index) => index + 1,
+  );
   const chapter = phase === "schedule" ? 5 : phase === "style" ? 6 : 7;
   const titleId = `plan-${phase}-title`;
   const hintId = `plan-${phase}-hint`;
 
   const canContinue =
     phase === "schedule"
-      ? Boolean(isJulyDate(answers.date) && answers.time)
+      ? Boolean(isDateInInvitationYear(answers.date) && answers.time)
       : phase === "style"
         ? Boolean(answers.dinnerStyle)
         : Boolean(answers.meetingWay);
@@ -86,13 +109,54 @@ export function DinnerPlanPage({
 
             <div className="schedule-stack">
               <fieldset className="calendar-card">
-                <legend className="sr-only">选择 2026 年 7 月的日期</legend>
+                <legend className="sr-only">选择 2026 年任意月份和日期</legend>
                 <div className="calendar-heading">
                   <div>
-                    <span className="field-kicker">DATE · JULY</span>
-                    <strong>{CALENDAR_MONTH_LABEL}</strong>
+                    <span className="field-kicker">DATE · 2026</span>
+                    <strong>{CALENDAR_YEAR} 年全年可选</strong>
                   </div>
                   <span className="calendar-note">选一个晚上</span>
+                </div>
+
+                <div className="calendar-month-controls">
+                  <button
+                    className="calendar-month-button"
+                    type="button"
+                    onClick={() =>
+                      setCalendarMonth((current) => Math.max(0, current - 1))
+                    }
+                    disabled={calendarMonth === 0}
+                    aria-label="上一个月"
+                  >
+                    ←
+                  </button>
+                  <label className="calendar-month-select-wrap">
+                    <span className="sr-only">选择月份</span>
+                    <select
+                      className="calendar-month-select"
+                      value={calendarMonth}
+                      onChange={(event) =>
+                        setCalendarMonth(Number(event.currentTarget.value))
+                      }
+                    >
+                      {CALENDAR_MONTHS.map((month) => (
+                        <option key={month.index} value={month.index}>
+                          {CALENDAR_YEAR} 年 {month.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    className="calendar-month-button"
+                    type="button"
+                    onClick={() =>
+                      setCalendarMonth((current) => Math.min(11, current + 1))
+                    }
+                    disabled={calendarMonth === 11}
+                    aria-label="下一个月"
+                  >
+                    →
+                  </button>
                 </div>
 
                 <div className="calendar-weekdays" aria-hidden="true">
@@ -102,15 +166,15 @@ export function DinnerPlanPage({
                 </div>
 
                 <div className="calendar-grid">
-                  {Array.from({ length: julyFirstDayOffset }, (_, index) => (
+                  {Array.from({ length: firstDayOffset }, (_, index) => (
                     <span
                       className="calendar-empty"
                       key={`empty-${index}`}
                       aria-hidden="true"
                     />
                   ))}
-                  {CALENDAR_DAYS.map((day) => {
-                    const dateValue = getJulyDateValue(day);
+                  {calendarDays.map((day) => {
+                    const dateValue = getDateValue(calendarMonth, day);
                     const selected = answers.date === dateValue;
                     return (
                       <label
@@ -124,7 +188,7 @@ export function DinnerPlanPage({
                           value={dateValue}
                           checked={selected}
                           onChange={() => onChange("date", dateValue)}
-                          aria-label={`${CALENDAR_YEAR} 年 7 月 ${day} 日，${weekdays[new Date(CALENDAR_YEAR, CALENDAR_MONTH_INDEX, day).getDay()]}`}
+                          aria-label={`${CALENDAR_YEAR} 年 ${calendarMonth + 1} 月 ${day} 日，${weekdays[new Date(CALENDAR_YEAR, calendarMonth, day).getDay()]}`}
                         />
                         <span>{day}</span>
                         <i aria-hidden="true" />

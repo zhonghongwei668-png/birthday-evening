@@ -2,18 +2,19 @@
 
 import { useCallback, useState } from "react";
 import { INITIAL_ANSWERS } from "@/data/invitation";
-import type { InvitationAnswers } from "./types";
+import type { InvitationAnswers, RecipientGender } from "./types";
 
-export const WELCOME_STEP = 0;
-export const FIRST_QUESTION_STEP = 1;
-export const LAST_QUESTION_STEP = 4;
-export const SCHEDULE_STEP = 5;
-export const STYLE_STEP = 6;
-export const MEETING_STEP = 7;
-export const FINAL_STEP = 8;
+export const SETUP_STEP = 0;
+export const WELCOME_STEP = 1;
+export const FIRST_QUESTION_STEP = 2;
+export const LAST_QUESTION_STEP = 5;
+export const SCHEDULE_STEP = 6;
+export const STYLE_STEP = 7;
+export const MEETING_STEP = 8;
+export const FINAL_STEP = 9;
 
 export function useInvitation() {
-  const [step, setStep] = useState(WELCOME_STEP);
+  const [step, setStep] = useState(SETUP_STEP);
   const [answers, setAnswers] =
     useState<InvitationAnswers>(INITIAL_ANSWERS);
 
@@ -32,8 +33,23 @@ export function useInvitation() {
   }, []);
 
   const back = useCallback(() => {
-    setStep((current) => Math.max(current - 1, WELCOME_STEP));
+    setStep((current) => Math.max(current - 1, SETUP_STEP));
   }, []);
+
+  const openInvitation = useCallback(
+    (
+      recipientName: string,
+      recipientGender: Exclude<RecipientGender, "">,
+    ) => {
+      setAnswers((current) => ({
+        ...current,
+        recipientName,
+        recipientGender,
+      }));
+      setStep(WELCOME_STEP);
+    },
+    [],
+  );
 
   const editPlan = useCallback(() => setStep(SCHEDULE_STEP), []);
 
@@ -43,6 +59,7 @@ export function useInvitation() {
     updateAnswer,
     next,
     back,
+    openInvitation,
     editPlan,
   };
 }

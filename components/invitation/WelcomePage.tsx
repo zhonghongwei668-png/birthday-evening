@@ -1,15 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { RECIPIENT_NAME } from "@/data/invitation";
 import { PageFrame } from "./PageFrame";
+import type { InvitationAnswers } from "./types";
 
 const reveal = {
   hidden: { opacity: 0, y: 10 },
   visible: { opacity: 1, y: 0 },
 };
 
-export function WelcomePage({ onStart }: { onStart: () => void }) {
+export function WelcomePage({
+  answers,
+  onStart,
+}: {
+  answers: InvitationAnswers;
+  onStart: () => void;
+}) {
   return (
     <PageFrame className="welcome-page" labelledBy="welcome-title">
       <div className="paper-orbit" aria-hidden="true">
@@ -40,7 +46,7 @@ export function WelcomePage({ onStart }: { onStart: () => void }) {
         </motion.div>
 
         <motion.div className="welcome-letter" variants={reveal}>
-          <p>Hi，{RECIPIENT_NAME}</p>
+          <p>Hi，{answers.recipientName.trim()}</p>
           <p>
             距离你的生日还有一点时间。
             <br />

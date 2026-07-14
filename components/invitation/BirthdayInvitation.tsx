@@ -7,21 +7,45 @@ import { FinalScreen } from "./FinalScreen";
 import { OpeningPage } from "./OpeningPage";
 import { DinnerPlanPage } from "./DinnerPlanPage";
 import { QuestionPage } from "./QuestionPage";
+import { TemplateSetupPage } from "./TemplateSetupPage";
 import { WelcomePage } from "./WelcomePage";
 import {
   FIRST_QUESTION_STEP,
   LAST_QUESTION_STEP,
   MEETING_STEP,
   SCHEDULE_STEP,
+  SETUP_STEP,
   STYLE_STEP,
   useInvitation,
   WELCOME_STEP,
 } from "./useInvitation";
 
 export function BirthdayInvitation() {
-  const { step, answers, updateAnswer, next, back, editPlan } = useInvitation();
+  const {
+    step,
+    answers,
+    updateAnswer,
+    next,
+    back,
+    openInvitation,
+    editPlan,
+  } = useInvitation();
   const reduceMotion = useReducedMotion();
   const [isOpening, setIsOpening] = useState(true);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const recipientName = (params.get("to") ?? "").trim().slice(0, 20);
+    const recipientGender = params.get("gender");
+
+    if (
+      params.get("invite") === "1" &&
+      recipientName &&
+      (recipientGender === "female" || recipientGender === "male")
+    ) {
+      openInvitation(recipientName, recipientGender);
+    }
+  }, [openInvitation]);
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -47,14 +71,22 @@ export function BirthdayInvitation() {
         <AnimatePresence mode="wait" initial={false}>
           {isOpening ? <OpeningPage key="opening" /> : null}
 
+          {!isOpening && step === SETUP_STEP ? (
+            <TemplateSetupPage
+              key="template-setup"
+              answers={answers}
+              onChange={updateAnswer}
+            />
+          ) : null}
+
           {!isOpening && step === WELCOME_STEP ? (
-            <WelcomePage key="welcome" onStart={next} />
+            <WelcomePage key="welcome" answers={answers} onStart={next} />
           ) : null}
 
           {!isOpening && question ? (
             <QuestionPage
               key={question.id}
-              chapter={step}
+              chapter={questionIndex + 1}
               question={question}
               value={answers[question.id]}
               onChange={(value) => updateAnswer(question.id, value)}

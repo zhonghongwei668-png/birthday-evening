@@ -5,8 +5,11 @@ export type QuestionKey =
   | "birthdayPriority";
 
 export type DinnerStyleId = "elegant" | "cozy" | "surprise";
+export type RecipientGender = "female" | "male" | "";
 
 export interface InvitationAnswers {
+  recipientName: string;
+  recipientGender: RecipientGender;
   pauseDay: string;
   dinnerKeyword: string;
   memory: string;

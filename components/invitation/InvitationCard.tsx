@@ -1,10 +1,7 @@
 "use client";
 
 import { forwardRef } from "react";
-import {
-  DINNER_STYLES,
-  RECIPIENT_NAME,
-} from "@/data/invitation";
+import { DINNER_STYLES } from "@/data/invitation";
 import type { InvitationAnswers } from "./types";
 
 const months = [
@@ -37,6 +34,13 @@ export const InvitationCard = forwardRef<HTMLDivElement, InvitationCardProps>(
     const style = DINNER_STYLES.find(
       (option) => option.id === answers.dinnerStyle,
     );
+    const recipientPronoun = answers.recipientGender === "male" ? "他" : "她";
+    const recipientLabel = answers.recipientGender === "male" ? "FOR HIM" : "FOR HER";
+    const [selectedYear, selectedMonth] = answers.date.split("-");
+    const dateLabel =
+      selectedYear && selectedMonth
+        ? `${months[Number(selectedMonth) - 1]} · ${selectedYear}`
+        : "BIRTHDAY · 2026";
 
     return (
       <div className="invite-card" ref={ref} id="invitation-card">
@@ -47,14 +51,19 @@ export const InvitationCard = forwardRef<HTMLDivElement, InvitationCardProps>(
           <div className="corner corner-br" aria-hidden="true" />
 
           <header className="card-header">
-            <span>BIRTHDAY DINNER NOTE</span>
-            <span>JULY · 2026</span>
+            <span>{recipientLabel}</span>
+            <span>{dateLabel}</span>
           </header>
 
           <div className="card-title-block">
             <p>A Little</p>
             <h2>Birthday Evening</h2>
-            <span className="card-for">For {RECIPIENT_NAME}</span>
+            <span className="card-for">
+              For {answers.recipientName.trim() || "A Friend"}
+            </span>
+            <small className="card-pronoun">
+              给{recipientPronoun}的一份生日晚餐邀请
+            </small>
           </div>
 
           <div className="card-rule" aria-hidden="true">

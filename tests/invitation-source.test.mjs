@@ -50,19 +50,59 @@ test("keeps export dynamic, browser-only, and PNG based", async () => {
   assert.match(stateSource, /setAnswers\(\(current\) =>/);
 });
 
-test("uses an inline July calendar instead of the native date picker", async () => {
+test("supports every valid date in 2026 with an inline month calendar", async () => {
   const [source, data] = await Promise.all([
     readFile(new URL("components/invitation/DinnerPlanPage.tsx", root), "utf8"),
     readFile(new URL("data/invitation.ts", root), "utf8"),
   ]);
 
-  assert.match(source, /2026 年 7 月/);
-  assert.match(data, /CALENDAR_DAYS = Array\.from\(\{ length: 31 \}/);
+  assert.match(data, /CALENDAR_YEAR = 2026/);
+  assert.match(data, /CALENDAR_MONTHS/);
+  assert.match(source, /daysInMonth/);
+  assert.match(source, /calendarMonth/);
   assert.match(source, /calendar-day/);
   assert.match(source, /type="radio"/);
   assert.doesNotMatch(source, /type="date"/);
   assert.match(source, /onChange\(\"date\", dateValue\)/);
-  assert.match(source, /isJulyDate\(answers\.date\)/);
+  assert.match(source, /isDateInInvitationYear\(answers\.date\)/);
+});
+
+test("separates inviter setup from the recipient answer flow", async () => {
+  const [setup, types, state, welcome, card, app] = await Promise.all([
+    readFile(
+      new URL("components/invitation/TemplateSetupPage.tsx", root),
+      "utf8",
+    ),
+    readFile(new URL("components/invitation/types.ts", root), "utf8"),
+    readFile(new URL("components/invitation/useInvitation.ts", root), "utf8"),
+    readFile(new URL("components/invitation/WelcomePage.tsx", root), "utf8"),
+    readFile(new URL("components/invitation/InvitationCard.tsx", root), "utf8"),
+    readFile(
+      new URL("components/invitation/BirthdayInvitation.tsx", root),
+      "utf8",
+    ),
+  ]);
+
+  assert.match(types, /recipientName: string/);
+  assert.match(types, /recipientGender: RecipientGender/);
+  assert.match(setup, /她/);
+  assert.match(setup, /他/);
+  assert.match(setup, /updateTemplateAnswer\([\s\S]*?"recipientName"/);
+  assert.match(setup, /生成专属邀请链接/);
+  assert.match(setup, /复制并发给对方/);
+  assert.match(setup, /searchParams/);
+  assert.match(setup, /navigator\.clipboard/);
+  assert.match(state, /SETUP_STEP/);
+  assert.match(state, /openInvitation/);
+  assert.match(state, /setStep\(WELCOME_STEP\)/);
+  assert.match(state, /editPlan[\s\S]*?setStep\(SCHEDULE_STEP\)/);
+  assert.match(welcome, /recipientName/);
+  assert.match(card, /recipientGender/);
+  assert.match(app, /TemplateSetupPage/);
+  assert.match(app, /params\.get\("invite"\)/);
+  assert.match(app, /params\.get\("to"\)/);
+  assert.match(app, /params\.get\("gender"\)/);
+  assert.match(app, /openInvitation/);
 });
 
 test("keeps the old-classmate tone and requested component structure", async () => {
