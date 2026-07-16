@@ -18,6 +18,8 @@ test("publishes clean source through a guarded one-click program", async () => {
   assert.match(publisher, /NEXT_PUBLIC_BASE_PATH="\/birthday-evening"/);
   assert.match(publisher, /git push github HEAD:source/);
   assert.match(publisher, /merge-base --is-ancestor/);
+  assert.match(publisher, /birthday-evening-github/);
+  assert.match(publisher, /GIT_SSH_COMMAND/);
   assert.match(publisher, /git diff --cached --name-only/);
   assert.match(publisher, /\.env/);
   assert.doesNotMatch(publisher, /--force|-f\s+github/);

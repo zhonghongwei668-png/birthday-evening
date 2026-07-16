@@ -9,6 +9,7 @@ REMOTE_BRANCH="source"
 LIVE_URL="https://zhonghongwei668-png.github.io/birthday-evening/"
 ACTIONS_URL="https://github.com/zhonghongwei668-png/birthday-evening/actions"
 CODEX_RUNTIME="${HOME}/.cache/codex-runtimes/codex-primary-runtime/dependencies"
+DEPLOY_KEY="${HOME}/.ssh/birthday-evening-github"
 
 if [[ -x "${CODEX_RUNTIME}/node/bin/node" ]]; then
   export PATH="${CODEX_RUNTIME}/node/bin:${CODEX_RUNTIME}/bin/fallback:${PATH}"
@@ -24,6 +25,9 @@ fail() {
 for command_name in git node pnpm; do
   command -v "${command_name}" >/dev/null 2>&1 || fail "电脑中找不到 ${command_name}，请先安装 Node.js、pnpm 和 Git。"
 done
+
+[[ -f "${DEPLOY_KEY}" ]] || fail "缺少生日邀请仓库的专用上传密钥，请先完成一次 GitHub 授权。"
+export GIT_SSH_COMMAND="ssh -i ${DEPLOY_KEY} -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || fail "当前文件夹不是 Git 项目。"
 git remote get-url "${REMOTE_NAME}" >/dev/null 2>&1 || fail "缺少名为 github 的远程仓库。"
