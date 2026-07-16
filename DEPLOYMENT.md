@@ -2,9 +2,9 @@
 
 这个项目没有后端、数据库或登录依赖。问题答案只保存在当前页面的 React state 中，刷新页面会重新开始。
 
-## 部署前个性化
+## 使用前生成邀请链接
 
-打开 `data/invitation.ts`，把 `RECIPIENT_NAME` 的 `XXX` 改成邀请对象的名字。
+打开网页后，由邀请人填写被邀请者名字并选择“她”或“他”，再复制生成的专属邀请链接发给对方。不需要为了更换邀请对象修改源代码。
 
 ## 当前 Sites 部署
 
@@ -17,12 +17,44 @@ pnpm build
 
 Sites 自动提供 HTTPS。当前私人预览可能带有工作区访问限制；如果希望把链接直接发给不在同一工作区的同学，建议使用下面的 Vercel 部署。
 
-## 部署到 GitHub Pages
+## GitHub Pages 一键自动更新（推荐）
 
-项目已经包含 GitHub Pages 自动发布配置，适合绕开当前 `chatgpt.site` 的 Cloudflare 访问拦截。
+项目已经包含 GitHub Pages 自动发布配置，适合绕开 `chatgpt.site` 的 Cloudflare 访问拦截。现有网页地址保持不变：
+
+<https://zhonghongwei668-png.github.io/birthday-evening/>
+
+### 第一次启用
+
+1. 打开 GitHub 仓库 <https://github.com/zhonghongwei668-png/birthday-evening>。
+2. 点击 **Settings → Pages**。
+3. 在 **Build and deployment → Source** 中选择 **GitHub Actions**。
+4. 回到 Mac 的项目文件夹，双击 **`发布到GitHub.command`**。
+5. 第一次上传如果系统要求登录 GitHub，按窗口提示完成一次登录。程序不会在项目里保存密码。
+
+源码会保存在独立的 `source` 分支，之前手动上传到 `main` 的文件不会被覆盖。
+
+### 以后每次更新
+
+1. 完成网页修改并保存。
+2. 双击 **`发布到GitHub.command`**。
+3. 输入一句更新说明，例如“优化邀请卡文案”；直接按回车也可以。
+4. 等待窗口显示“发布完成”。
+5. 打开仓库的 **Actions** 页面，最新任务变为绿色后，线上网页通常会在几分钟内更新。
+
+发布程序会依次检查代码、测试邀请流程、生成 GitHub Pages 版本、记录版本并上传完整源文件。任何检查失败都会停止发布，不影响当前线上网页；程序也不会强制覆盖 GitHub 上的新改动。
+
+也可以在项目终端中运行：
+
+```bash
+pnpm run publish:github
+```
+
+### 首次创建其他 GitHub Pages 仓库
+
+如果以后把模板复制到另一个 GitHub 仓库，可按下面步骤配置：
 
 1. 在 GitHub 新建一个公开仓库，例如 `birthday-evening`。不要直接覆盖已有的 `用户名.github.io` 主站，除非这个仓库本来就是专门放邀请页的。
-2. 把本项目推送到仓库的 `main` 分支。
+2. 把本项目推送到仓库的 `source` 分支，并相应修改发布脚本中的仓库地址和网页地址。
 3. 打开仓库的 **Settings → Pages**。
 4. 在 **Build and deployment → Source** 中选择 **GitHub Actions**。
 5. 打开 **Actions**，等待 **Deploy birthday invitation to GitHub Pages** 变为绿色。

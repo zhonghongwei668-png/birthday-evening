@@ -3,7 +3,7 @@ name: Deploy birthday invitation to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - source
   workflow_dispatch:
 
 permissions:
@@ -46,8 +46,11 @@ jobs:
       - name: Check code
         run: pnpm run lint
 
+      - name: Test site
+        run: pnpm run test
+
       - name: Build static site
-        run: pnpm run build:github
+        run: pnpm exec next build --webpack
         env:
           GITHUB_PAGES: "true"
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
