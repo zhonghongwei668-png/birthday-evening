@@ -3,14 +3,17 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import {
-  CALENDAR_MONTHS,
   CALENDAR_WEEKDAYS,
-  CALENDAR_YEAR,
   DINNER_STYLES,
   MEETING_OPTIONS,
   TIME_OPTIONS,
 } from "@/data/invitation";
 import { ChoiceCard } from "./ChoiceCard";
+import {
+  buildAvailableMonths,
+  isSelectableInvitationDate,
+  ROLLING_MONTH_COUNT,
+} from "./dateRange";
 import { PageFrame } from "./PageFrame";
 import { ProgressRail } from "./ProgressRail";
 import type {
@@ -31,24 +34,8 @@ interface DinnerPlanPageProps {
 }
 
 const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-function getDateValue(monthIndex: number, day: number) {
-  return `${CALENDAR_YEAR}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-function isDateInInvitationYear(value: string) {
-  const match = /^(2026)-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.exec(
-    value,
-  );
-  if (!match) return false;
-  const year = Number(match[1]);
-  const month = Number(match[2]);
-  const day = Number(match[3]);
-  const date = new Date(year, month - 1, day);
-  return (
-    date.getFullYear() === CALENDAR_YEAR &&
-    date.getMonth() === month - 1 &&
-    date.getDate() === day
-  );
+function getDateValue(year: number, monthIndex: number, day: number) {
+  return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 export function formatChineseDate(value: string) {
@@ -66,17 +53,20 @@ export function DinnerPlanPage({
   onBack,
   onContinue,
 }: DinnerPlanPageProps) {
-  const initialCalendarMonth = isDateInInvitationYear(answers.date)
-    ? Number(answers.date.split("-")[1]) - 1
-    : 6;
-  const [calendarMonth, setCalendarMonth] = useState(initialCalendarMonth);
-  const daysInMonth = new Date(
-    CALENDAR_YEAR,
-    calendarMonth + 1,
+  const [availableMonths] = useState(() => buildAvailableMonths());
+  const selectedMonthValue = answers.date.slice(0, 7);
+  const initialCalendarMonth = Math.max(
     0,
-  ).getDate();
+    availableMonths.findIndex((month) => month.value === selectedMonthValue),
+  );
+  const [calendarMonthIndex, setCalendarMonthIndex] =
+    useState(initialCalendarMonth);
+  const calendarCursor = availableMonths[calendarMonthIndex];
+  const calendarYear = calendarCursor.year;
+  const calendarMonth = calendarCursor.month;
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
   const firstDayOffset =
-    (new Date(CALENDAR_YEAR, calendarMonth, 1).getDay() + 6) % 7;
+    (new Date(calendarYear, calendarMonth, 1).getDay() + 6) % 7;
   const calendarDays = Array.from(
     { length: daysInMonth },
     (_, index) => index + 1,
@@ -87,7 +77,7 @@ export function DinnerPlanPage({
 
   const canContinue =
     phase === "schedule"
-      ? Boolean(isDateInInvitationYear(answers.date) && answers.time)
+      ? Boolean(isSelectableInvitationDate(answers.date) && answers.time)
       : phase === "style"
         ? Boolean(answers.dinnerStyle)
         : Boolean(answers.meetingWay);
@@ -109,11 +99,11 @@ export function DinnerPlanPage({
 
             <div className="schedule-stack">
               <fieldset className="calendar-card">
-                <legend className="sr-only">选择 2026 年任意月份和日期</legend>
+                <legend className="sr-only">选择未来十八个月内的日期</legend>
                 <div className="calendar-heading">
                   <div>
-                    <span className="field-kicker">DATE · 2026</span>
-                    <strong>{CALENDAR_YEAR} 年全年可选</strong>
+                    <span className="field-kicker">DATE · ROLLING CALENDAR</span>
+                    <strong>未来 {ROLLING_MONTH_COUNT} 个月可选</strong>
                   </div>
                   <span className="calendar-note">选一个晚上</span>
                 </div>
@@ -123,9 +113,11 @@ export function DinnerPlanPage({
                     className="calendar-month-button"
                     type="button"
                     onClick={() =>
-                      setCalendarMonth((current) => Math.max(0, current - 1))
+                      setCalendarMonthIndex((current) =>
+                        Math.max(0, current - 1),
+                      )
                     }
-                    disabled={calendarMonth === 0}
+                    disabled={calendarMonthIndex === 0}
                     aria-label="上一个月"
                   >
                     ←
@@ -134,14 +126,17 @@ export function DinnerPlanPage({
                     <span className="sr-only">选择月份</span>
                     <select
                       className="calendar-month-select"
-                      value={calendarMonth}
-                      onChange={(event) =>
-                        setCalendarMonth(Number(event.currentTarget.value))
-                      }
+                      value={calendarCursor.value}
+                      onChange={(event) => {
+                        const nextIndex = availableMonths.findIndex(
+                          (month) => month.value === event.currentTarget.value,
+                        );
+                        if (nextIndex >= 0) setCalendarMonthIndex(nextIndex);
+                      }}
                     >
-                      {CALENDAR_MONTHS.map((month) => (
-                        <option key={month.index} value={month.index}>
-                          {CALENDAR_YEAR} 年 {month.label}
+                      {availableMonths.map((month) => (
+                        <option key={month.value} value={month.value}>
+                          {month.label}
                         </option>
                       ))}
                     </select>
@@ -150,9 +145,11 @@ export function DinnerPlanPage({
                     className="calendar-month-button"
                     type="button"
                     onClick={() =>
-                      setCalendarMonth((current) => Math.min(11, current + 1))
+                      setCalendarMonthIndex((current) =>
+                        Math.min(availableMonths.length - 1, current + 1),
+                      )
                     }
-                    disabled={calendarMonth === 11}
+                    disabled={calendarMonthIndex === availableMonths.length - 1}
                     aria-label="下一个月"
                   >
                     →
@@ -174,12 +171,17 @@ export function DinnerPlanPage({
                     />
                   ))}
                   {calendarDays.map((day) => {
-                    const dateValue = getDateValue(calendarMonth, day);
+                    const dateValue = getDateValue(
+                      calendarYear,
+                      calendarMonth,
+                      day,
+                    );
                     const selected = answers.date === dateValue;
+                    const selectable = isSelectableInvitationDate(dateValue);
                     return (
                       <label
                         key={dateValue}
-                        className={`calendar-day ${selected ? "is-selected" : ""}`}
+                        className={`calendar-day ${selected ? "is-selected" : ""} ${!selectable ? "is-disabled" : ""}`}
                       >
                         <input
                           className="sr-only"
@@ -187,8 +189,9 @@ export function DinnerPlanPage({
                           name="date"
                           value={dateValue}
                           checked={selected}
+                          disabled={!selectable}
                           onChange={() => onChange("date", dateValue)}
-                          aria-label={`${CALENDAR_YEAR} 年 ${calendarMonth + 1} 月 ${day} 日，${weekdays[new Date(CALENDAR_YEAR, calendarMonth, day).getDay()]}`}
+                          aria-label={`${calendarYear} 年 ${calendarMonth + 1} 月 ${day} 日，${weekdays[new Date(calendarYear, calendarMonth, day).getDay()]}`}
                         />
                         <span>{day}</span>
                         <i aria-hidden="true" />

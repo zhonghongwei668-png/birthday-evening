@@ -34,13 +34,17 @@ export const InvitationCard = forwardRef<HTMLDivElement, InvitationCardProps>(
     const style = DINNER_STYLES.find(
       (option) => option.id === answers.dinnerStyle,
     );
-    const recipientPronoun = answers.recipientGender === "male" ? "他" : "她";
-    const recipientLabel = answers.recipientGender === "male" ? "FOR HIM" : "FOR HER";
+    const recipientCopy =
+      answers.recipientGender === "female"
+        ? { label: "FOR HER", note: "给她的一份生日晚餐邀请" }
+        : answers.recipientGender === "male"
+          ? { label: "FOR HIM", note: "给他的一份生日晚餐邀请" }
+          : { label: "FOR A FRIEND", note: "给 TA 的一份生日晚餐邀请" };
     const [selectedYear, selectedMonth] = answers.date.split("-");
     const dateLabel =
       selectedYear && selectedMonth
         ? `${months[Number(selectedMonth) - 1]} · ${selectedYear}`
-        : "BIRTHDAY · 2026";
+        : "BIRTHDAY · EVENING";
 
     return (
       <div className="invite-card" ref={ref} id="invitation-card">
@@ -51,7 +55,7 @@ export const InvitationCard = forwardRef<HTMLDivElement, InvitationCardProps>(
           <div className="corner corner-br" aria-hidden="true" />
 
           <header className="card-header">
-            <span>{recipientLabel}</span>
+            <span>{recipientCopy.label}</span>
             <span>{dateLabel}</span>
           </header>
 
@@ -62,7 +66,7 @@ export const InvitationCard = forwardRef<HTMLDivElement, InvitationCardProps>(
               For {answers.recipientName.trim() || "A Friend"}
             </span>
             <small className="card-pronoun">
-              给{recipientPronoun}的一份生日晚餐邀请
+              {recipientCopy.note}
             </small>
           </div>
 
@@ -83,6 +87,21 @@ export const InvitationCard = forwardRef<HTMLDivElement, InvitationCardProps>(
               <dt>Dinner Style</dt>
               <dd>{style?.title ?? "A Good Evening"}</dd>
               <small>{style ? `${style.subtitle} · ${style.description}` : ""}</small>
+            </div>
+            <div className="card-detail card-detail-wide">
+              <dt>Meeting</dt>
+              <dd>{answers.meetingWay || "TO BE DECIDED"}</dd>
+            </div>
+            <div className="card-detail card-detail-wide card-evening-wish">
+              <dt>Evening Wish</dt>
+              <dd>
+                {[answers.dinnerKeyword, answers.birthdayPriority]
+                  .filter(Boolean)
+                  .join(" · ") || "轻松 · 开心"}
+              </dd>
+              <small>
+                {[answers.pauseDay, answers.memory].filter(Boolean).join(" · ")}
+              </small>
             </div>
             <div className="card-detail card-detail-wide">
               <dt>Place</dt>

@@ -5,7 +5,7 @@ export type QuestionKey =
   | "birthdayPriority";
 
 export type DinnerStyleId = "elegant" | "cozy" | "surprise";
-export type RecipientGender = "female" | "male" | "";
+export type RecipientGender = "female" | "male" | "neutral" | "";
 
 export interface InvitationAnswers {
   recipientName: string;

@@ -29,7 +29,7 @@ export function WelcomePage({
         transition={{ staggerChildren: 0.1, delayChildren: 0.12 }}
       >
         <motion.p className="eyebrow" variants={reveal}>
-          PRIVATE INVITATION · 2026
+          PRIVATE INVITATION · A LITTLE PLAN
         </motion.p>
 
         <motion.div variants={reveal}>

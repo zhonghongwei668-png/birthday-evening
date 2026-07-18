@@ -66,11 +66,6 @@ export const QUESTIONS: readonly InvitationQuestion[] = [
 
 export const TIME_OPTIONS = ["17:30", "18:00", "18:30", "19:00"] as const;
 
-export const CALENDAR_YEAR = 2026;
-export const CALENDAR_MONTHS = Array.from({ length: 12 }, (_, index) => ({
-  index,
-  label: `${index + 1} 月`,
-}));
 export const CALENDAR_WEEKDAYS = ["一", "二", "三", "四", "五", "六", "日"] as const;
 
 export const DINNER_STYLES: readonly DinnerStyle[] = [

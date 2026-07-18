@@ -40,12 +40,14 @@ export function useInvitation() {
     (
       recipientName: string,
       recipientGender: Exclude<RecipientGender, "">,
+      restoredAnswers: Partial<InvitationAnswers> = {},
     ) => {
-      setAnswers((current) => ({
-        ...current,
+      setAnswers({
+        ...INITIAL_ANSWERS,
+        ...restoredAnswers,
         recipientName,
         recipientGender,
-      }));
+      });
       setStep(WELCOME_STEP);
     },
     [],

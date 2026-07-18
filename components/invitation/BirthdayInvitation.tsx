@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, MotionConfig, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { QUESTIONS } from "@/data/invitation";
 import { FinalScreen } from "./FinalScreen";
 import { OpeningPage } from "./OpeningPage";
@@ -9,6 +9,11 @@ import { DinnerPlanPage } from "./DinnerPlanPage";
 import { QuestionPage } from "./QuestionPage";
 import { TemplateSetupPage } from "./TemplateSetupPage";
 import { WelcomePage } from "./WelcomePage";
+import {
+  createInvitationStorageKey,
+  loadInvitationDraft,
+  saveInvitationDraft,
+} from "./persistence";
 import {
   FIRST_QUESTION_STEP,
   LAST_QUESTION_STEP,
@@ -32,6 +37,8 @@ export function BirthdayInvitation() {
   } = useInvitation();
   const reduceMotion = useReducedMotion();
   const [isOpening, setIsOpening] = useState(true);
+  const storageKeyRef = useRef<string | null>(null);
+  const skipInitialDraftSaveRef = useRef(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -41,11 +48,36 @@ export function BirthdayInvitation() {
     if (
       params.get("invite") === "1" &&
       recipientName &&
-      (recipientGender === "female" || recipientGender === "male")
+      (recipientGender === "female" ||
+        recipientGender === "male" ||
+        recipientGender === "neutral")
     ) {
-      openInvitation(recipientName, recipientGender);
+      const key = createInvitationStorageKey(recipientName, recipientGender);
+      let restoredAnswers = {};
+      try {
+        restoredAnswers = loadInvitationDraft(window.localStorage, key);
+      } catch {
+        // The invitation remains usable when device storage is unavailable.
+      }
+      storageKeyRef.current = key;
+      skipInitialDraftSaveRef.current = true;
+      openInvitation(recipientName, recipientGender, restoredAnswers);
     }
   }, [openInvitation]);
+
+  useEffect(() => {
+    const storageKey = storageKeyRef.current;
+    if (!storageKey) return;
+    if (skipInitialDraftSaveRef.current) {
+      skipInitialDraftSaveRef.current = false;
+      return;
+    }
+    try {
+      saveInvitationDraft(window.localStorage, storageKey, answers);
+    } catch {
+      // Keep the live React state when device storage is unavailable.
+    }
+  }, [answers]);
 
   useEffect(() => {
     const timer = window.setTimeout(

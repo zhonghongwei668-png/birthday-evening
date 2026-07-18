@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { exportInvitationCard } from "./exportCard";
 import { InvitationCard } from "./InvitationCard";
 import { PageFrame } from "./PageFrame";
+import { shareInvitationResult } from "./resultSummary";
 import type { InvitationAnswers } from "./types";
 
 interface FinalScreenProps {
@@ -13,6 +14,13 @@ interface FinalScreenProps {
 }
 
 type ExportState = "idle" | "working" | "saved" | "error";
+type ShareState =
+  | "idle"
+  | "working"
+  | "shared"
+  | "copied"
+  | "cancelled"
+  | "error";
 
 export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -20,6 +28,7 @@ export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
   const [showCard, setShowCard] = useState(Boolean(reduceMotion));
   const [showPostscript, setShowPostscript] = useState(false);
   const [exportState, setExportState] = useState<ExportState>("idle");
+  const [shareState, setShareState] = useState<ShareState>("idle");
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -49,6 +58,17 @@ export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
     }
   }
 
+  async function handleShare() {
+    if (shareState === "working") return;
+    setShareState("working");
+    try {
+      const outcome = await shareInvitationResult(answers);
+      setShareState(outcome);
+    } catch {
+      setShareState("error");
+    }
+  }
+
   const exportLabel =
     exportState === "working"
       ? "Saving this moment…"
@@ -63,6 +83,26 @@ export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
         : exportState === "saved"
           ? "邀请卡已经保存为 PNG。"
           : "";
+  const shareLabel =
+    shareState === "working"
+      ? "正在准备…"
+      : shareState === "shared"
+        ? "已经发出"
+        : shareState === "copied"
+          ? "选择已复制"
+          : "把我的选择发给邀请人";
+  const shareStatusText =
+    shareState === "copied"
+      ? "选择已经复制，请粘贴到微信发给邀请人。"
+      : shareState === "shared"
+        ? "这份晚餐选择已经分享。"
+        : shareState === "cancelled"
+          ? "这次没有发送，想好后可以再试。"
+          : shareState === "error"
+            ? "暂时无法分享，请稍后再试。"
+            : shareState === "working"
+              ? "正在打开手机分享选项。"
+              : "";
 
   return (
     <PageFrame className="final-page" labelledBy="final-title">
@@ -107,7 +147,16 @@ export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
               transition={{ delay: 0.48 }}
             >
               <button
-                className="primary-button export-button"
+                className="primary-button share-result-button"
+                type="button"
+                onClick={handleShare}
+                disabled={shareState === "working"}
+              >
+                <span>{shareLabel}</span>
+                <span aria-hidden="true">↗</span>
+              </button>
+              <button
+                className="secondary-button export-button"
                 type="button"
                 onClick={handleExport}
                 disabled={exportState === "working"}
@@ -120,7 +169,7 @@ export function FinalScreen({ answers, onEdit }: FinalScreenProps) {
                 重新编辑
               </button>
               <p className="export-status" role="status" aria-live="polite">
-                {exportStatusText}
+                {shareStatusText || exportStatusText}
               </p>
             </motion.div>
 

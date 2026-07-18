@@ -237,6 +237,30 @@ button {
   cursor: not-allowed;
 }
 
+.secondary-button {
+  display: inline-flex;
+  min-height: 52px;
+  padding: 0 18px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid rgba(62, 56, 46, 0.22);
+  border-radius: 14px;
+  background: rgba(250, 247, 240, 0.75);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.secondary-button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+.secondary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Reusable template setup */
 .template-page {
   justify-content: center;
@@ -324,6 +348,10 @@ button {
   display: grid;
   gap: 9px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gender-option:last-child {
+  grid-column: 1 / -1;
 }
 
 .gender-option {
@@ -1018,6 +1046,18 @@ button {
   background: var(--gold-light);
 }
 
+.calendar-day.is-disabled {
+  color: rgba(119, 113, 104, 0.3);
+  cursor: not-allowed;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.calendar-day.is-disabled:hover {
+  border-color: transparent;
+  background: transparent;
+}
+
 .calendar-picked {
   display: flex;
   min-height: 31px;
@@ -1237,9 +1277,9 @@ button {
 .invite-card {
   width: 100%;
   max-width: 420px;
-  min-height: 465px;
+  min-height: 510px;
   margin: 0 auto;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 5.6;
   overflow: hidden;
   border: 1px solid #c9b58f;
   background: #f7f3eb;
@@ -1362,7 +1402,7 @@ button {
 .card-details {
   display: grid;
   margin: 0;
-  gap: 10px;
+  gap: 8px;
   grid-template-columns: minmax(0, 1fr);
 }
 
@@ -1422,6 +1462,10 @@ button {
   flex-wrap: wrap;
   align-items: center;
   gap: 12px 17px;
+}
+
+.share-result-button {
+  width: 100%;
 }
 
 .export-button {

@@ -50,21 +50,21 @@ test("keeps export dynamic, browser-only, and PNG based", async () => {
   assert.match(stateSource, /setAnswers\(\(current\) =>/);
 });
 
-test("supports every valid date in 2026 with an inline month calendar", async () => {
-  const [source, data] = await Promise.all([
+test("supports a rolling inline month calendar", async () => {
+  const [source, range] = await Promise.all([
     readFile(new URL("components/invitation/DinnerPlanPage.tsx", root), "utf8"),
-    readFile(new URL("data/invitation.ts", root), "utf8"),
+    readFile(new URL("components/invitation/dateRange.ts", root), "utf8"),
   ]);
 
-  assert.match(data, /CALENDAR_YEAR = 2026/);
-  assert.match(data, /CALENDAR_MONTHS/);
+  assert.match(range, /ROLLING_MONTH_COUNT = 18/);
+  assert.match(range, /buildAvailableMonths/);
   assert.match(source, /daysInMonth/);
-  assert.match(source, /calendarMonth/);
+  assert.match(source, /calendarMonthIndex/);
   assert.match(source, /calendar-day/);
   assert.match(source, /type="radio"/);
   assert.doesNotMatch(source, /type="date"/);
   assert.match(source, /onChange\(\"date\", dateValue\)/);
-  assert.match(source, /isDateInInvitationYear\(answers\.date\)/);
+  assert.match(source, /isSelectableInvitationDate\(answers\.date\)/);
 });
 
 test("separates inviter setup from the recipient answer flow", async () => {
@@ -87,6 +87,7 @@ test("separates inviter setup from the recipient answer flow", async () => {
   assert.match(types, /recipientGender: RecipientGender/);
   assert.match(setup, /她/);
   assert.match(setup, /他/);
+  assert.match(setup, /TA/);
   assert.match(setup, /updateTemplateAnswer\([\s\S]*?"recipientName"/);
   assert.match(setup, /生成专属邀请链接/);
   assert.match(setup, /复制并发给对方/);

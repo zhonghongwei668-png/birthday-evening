@@ -18,11 +18,12 @@ interface TemplateSetupPageProps {
 
 const genderOptions: ReadonlyArray<{
   id: Exclude<RecipientGender, "">;
-  pronoun: "她" | "他";
+  pronoun: "她" | "他" | "TA";
   label: string;
 }> = [
   { id: "female", pronoun: "她", label: "女生 / 女性朋友" },
   { id: "male", pronoun: "他", label: "男生 / 男性朋友" },
+  { id: "neutral", pronoun: "TA", label: "朋友 / 不特别标注" },
 ];
 
 const reveal = {
@@ -97,7 +98,7 @@ export function TemplateSetupPage({
         transition={{ staggerChildren: 0.08, delayChildren: 0.08 }}
       >
         <motion.p className="eyebrow" variants={reveal}>
-          MAKE IT YOURS · 2026
+          MAKE IT YOURS · A PRIVATE NOTE
         </motion.p>
 
         <motion.div className="template-heading" variants={reveal}>
@@ -109,7 +110,7 @@ export function TemplateSetupPage({
           <p>
             这里是邀请人的制作页面。
             <br />
-            填好对方的称呼，再把专属链接发给她或他。
+            填好对方的称呼，再把专属链接发给对方。
           </p>
         </motion.div>
 
@@ -142,7 +143,7 @@ export function TemplateSetupPage({
                 </label>
 
                 <fieldset className="template-gender-fieldset">
-                  <legend className="field-kicker">PRONOUN / 对方是</legend>
+                  <legend className="field-kicker">PRONOUN / 称呼方式</legend>
                   <div className="gender-grid">
                     {genderOptions.map((option) => {
                       const selected = answers.recipientGender === option.id;
@@ -251,7 +252,7 @@ export function TemplateSetupPage({
         </AnimatePresence>
 
         <motion.p className="template-privacy" variants={reveal}>
-          对方不会看到这个制作页面；晚餐答案也只保存在对方当前打开的页面中。
+          对方不会看到这个制作页面；答案只暂存在对方当前设备，主动分享后你才会收到。
         </motion.p>
       </motion.div>
     </PageFrame>
